@@ -682,8 +682,6 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
  */
 - (BOOL)startOrContinueSession:(long long)timestamp;
 
-- (void)waitForDeviceIdSetWithTimeout:(dispatch_time_t)timeout;
-
 @end
 
 #pragma mark - constants
@@ -691,5 +689,6 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
 extern NSString *const kAMPSessionStartEvent;
 extern NSString *const kAMPSessionEndEvent;
 extern NSString *const kAMPRevenueEvent;
+extern NSString *const AmplitudeDidInitializeNotification;
 
 NS_ASSUME_NONNULL_END

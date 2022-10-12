@@ -92,13 +92,13 @@
 @property (nonatomic, assign) int backoffUploadBatchSize;
 @property (nonatomic, copy, readwrite, nullable) NSString *userId;
 @property (nonatomic, copy, readwrite) NSString *deviceId;
-@property (nonatomic, readonly) dispatch_semaphore_t deviceIdSemaphore;
 
 @end
 
 NSString *const kAMPSessionStartEvent = @"session_start";
 NSString *const kAMPSessionEndEvent = @"session_end";
 NSString *const kAMPRevenueEvent = @"revenue_amount";
+NSString *const AmplitudeDidInitializeNotification = @"AmplitudeDidInitializeNotification";
 
 static NSString *const BACKGROUND_QUEUE_NAME = @"BACKGROUND";
 static NSString *const DATABASE_VERSION = @"database_version";
@@ -202,7 +202,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _sslPinningEnabled = NO;
 #endif
 
-        _deviceIdSemaphore = dispatch_semaphore_create(0);
         _initialized = NO;
         _sessionId = -1;
         _updateScheduled = NO;
@@ -406,11 +405,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [self initializeApiKey:apiKey userId:userId setUserId:YES];
 }
 
-- (void)waitForDeviceIdSetWithTimeout:(dispatch_time_t)timeout {
-    dispatch_semaphore_wait(self.deviceIdSemaphore, timeout);
-    dispatch_semaphore_signal(self.deviceIdSemaphore);
-}
-
 /**
  * SetUserId: client explicitly initialized with a userId (can be nil).
  * If setUserId is NO, then attempt to load userId from saved eventsData.
@@ -447,7 +441,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                 self.userId = [self.dbHelper getValue:USER_ID];
             }
             
-            dispatch_semaphore_signal(self.deviceIdSemaphore);
+            [NSNotificationCenter.defaultCenter
+             postNotificationName:AmplitudeDidInitializeNotification object:self];
         }];
 
 #if TARGET_OS_IPHONE
