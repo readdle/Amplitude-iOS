@@ -689,6 +689,6 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
 extern NSString *const kAMPSessionStartEvent;
 extern NSString *const kAMPSessionEndEvent;
 extern NSString *const kAMPRevenueEvent;
-extern NSString *const AmplitudeDidSetUserIdNotification;
+extern NSString *const AmplitudeDidSetDeviceIdNotification;
 
 NS_ASSUME_NONNULL_END

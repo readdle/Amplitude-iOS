@@ -98,7 +98,7 @@
 NSString *const kAMPSessionStartEvent = @"session_start";
 NSString *const kAMPSessionEndEvent = @"session_end";
 NSString *const kAMPRevenueEvent = @"revenue_amount";
-NSString *const AmplitudeDidSetUserIdNotification = @"AmplitudeDidInitializeNotification";
+NSString *const AmplitudeDidSetDeviceIdNotification = @"AmplitudeDidSetDeviceIdNotification";
 
 static NSString *const BACKGROUND_QUEUE_NAME = @"BACKGROUND";
 static NSString *const DATABASE_VERSION = @"database_version";
@@ -442,7 +442,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             }
             
             [NSNotificationCenter.defaultCenter
-             postNotificationName:AmplitudeDidSetUserIdNotification object:self];
+             postNotificationName:AmplitudeDidSetDeviceIdNotification object:self];
         }];
 
 #if TARGET_OS_IPHONE
