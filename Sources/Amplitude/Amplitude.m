@@ -1283,6 +1283,18 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }];
 }
 
+- (void)unsetUserPropertyWithKey:(NSString *)key {
+    if (key == nil) {
+        return;
+    }
+
+    [self runOnBackgroundQueue:^{
+        AMPIdentify *identify = [AMPIdentify identify];
+        [identify unset:key];
+        [self identify:identify];
+    }];
+}
+
 // maintain for legacy
 // replace argument is deprecated. In earlier versions of this SDK, this replaced the in-memory userProperties dictionary with the input, but now userProperties are no longer stored in memory.
 - (void)setUserProperties:(NSDictionary *)userProperties replace:(BOOL)replace {

@@ -684,6 +684,8 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
 
 - (void)waitForDeviceIdSetWithTimeout:(dispatch_time_t)timeout;
 
+- (void)unsetUserPropertyWithKey:(NSString *)key;
+
 @end
 
 #pragma mark - constants
