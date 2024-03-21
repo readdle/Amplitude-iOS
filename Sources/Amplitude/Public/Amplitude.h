@@ -22,15 +22,26 @@
 //
 
 #import <Foundation/Foundation.h>
+<<<<<<< HEAD:Sources/Amplitude/Amplitude.h
 #import <Amplitude/AMPIdentify.h>
 #import <Amplitude/AMPRevenue.h>
 #import <Amplitude/AMPTrackingOptions.h>
+=======
+#import "AMPIdentify.h"
+#import "AMPRevenue.h"
+#import "AMPTrackingOptions.h"
+#import "AMPPlan.h"
+#import "AMPIngestionMetadata.h"
+#import "AMPServerZone.h"
+#import "AMPMiddleware.h"
+#import "AMPDefaultTrackingOptions.h"
+>>>>>>> amplitude/main:Sources/Amplitude/Public/Amplitude.h
 
 NS_ASSUME_NONNULL_BEGIN
 
 typedef NSString *_Nonnull (^AMPAdSupportBlock)(void);
 typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
-
+typedef void (^AMPInitCompletionBlock)(void);
 /**
  Amplitude iOS SDK.
 
@@ -108,7 +119,7 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
 @property (nonatomic, assign) int eventUploadMaxBatchSize;
 
 /**
- The maximum number of events that can be stored lcoally. The default is 1000 events.
+ The maximum number of events that can be stored locally. The default is 1000 events.
  */
 @property (nonatomic, assign) int eventMaxCount;
 
@@ -125,7 +136,16 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
 /**
  Whether to automatically log start and end session events corresponding to the start and end of a user's session.
  */
-@property (nonatomic, assign) BOOL trackingSessionEvents;
+@property (nonatomic, assign) BOOL trackingSessionEvents DEPRECATED_MSG_ATTRIBUTE("Use `defaultTracking.sessions` instead");
+
+/**
+ Whether to enable the default events:
+    - sessions tracking, replacing the previous trackingSessionEvents, including session_start, session_end, default to disabled.
+    - appLifecycles tracking, including Application Installed, Application Updated, Application Opened, Application Backgrounded, default to disabled.
+    - deepLinks tracking, including Deep Link Opened, note you will still need to call continueUserActivity or openURL method manually, default to disabled.
+    - screenViews tracking, including Screen Viewed, default to disabled.
+ */
+@property (nonatomic, strong) AMPDefaultTrackingOptions *defaultTracking;
 
 /**
  Library name is default as `amplitude-ios`.
@@ -176,13 +196,27 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
  */
 @property (nonatomic, strong, nullable) AMPLocationInfoBlock locationInfoBlock;
 
-#if TARGET_OS_IOS || TARGET_OS_MACCATALYST
 /**
- Show Amplitude Event Explorer when you're running a debug build.
+ Content-Type header for event sending requests. Only relevant for sending events to a different URL (e.g. proxy server)
  */
-@property (nonatomic, assign, readwrite) BOOL showEventExplorer;
+@property (nonatomic, copy, readonly) NSString *contentTypeHeader;
 
-#endif
+/**
+ * Sets a block to be called after completely initialized.
+ *
+ * Example:
+ *  __typeof(amp) __weak weakAmp = amp;
+ *  amp.initCompletionBlock = ^(void){
+ *     NSLog(@"deviceId: %@, userId: %@", weakAmp.deviceId, weakAmp.userId);
+ *  };
+ */
+@property (nonatomic, strong, nullable) AMPInitCompletionBlock initCompletionBlock;
+
+/**
+ * Defer the forground check in initializeApiKey.
+ * checkInForeground need to be manually called in order to get the right config and session info if deferCheckInForeground = true has been set.
+ */
+@property (nonatomic, assign) BOOL deferCheckInForeground;
 
 #pragma mark - Methods
 
@@ -252,6 +286,10 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
 */
 - (void)initializeApiKey:(NSString *)apiKey userId:(nullable NSString *)userId;
 
+/**
+* Manually check in and set the forground related settings including dynamic config and sesstion. Need to be called manually when onEnterForeground if  deferCheckInForeground = true.
+*/
+- (void)checkInForeground;
 
 /**-----------------------------------------------------------------------------
  * @name Logging Events
@@ -280,6 +318,12 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
  @see [Tracking Events](https://github.com/amplitude/amplitude-ios#tracking-events)
  */
 - (void)logEvent:(NSString *)eventType withEventProperties:(nullable NSDictionary *)eventProperties;
+
+- (void)logEvent:(NSString *)eventType withEventProperties:(nullable NSDictionary *)eventProperties withMiddlewareExtra: (nullable NSMutableDictionary *) extra;
+
+- (void)logEvent:(NSString *)eventType withEventProperties:(nullable NSDictionary *)eventProperties withUserProperties:(NSDictionary *)userProperties;
+
+- (void)logEvent:(NSString *)eventType withEventProperties:(nullable NSDictionary *)eventProperties withUserProperties:(NSDictionary *)userProperties withMiddlewareExtra: (nullable NSMutableDictionary *) extra;
 
 /**
  Tracks an event. Events are saved locally.
@@ -590,6 +634,13 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
 - (void)setOptOut:(BOOL)enabled;
 
 /**
+ Sets event upload max batch size. This controls the maximum number of events sent with each upload request.
+
+ @param eventUploadMaxBatchSize                  Set the event upload max batch size
+ */
+- (void)updateEventUploadMaxBatchSize:(int)eventUploadMaxBatchSize;
+
+/**
  Disables sending logged events to Amplitude servers.
 
  If you want to stop logged events from being sent to Amplitude severs, use this method to set the client to offline. Once offline is enabled, logged events will not be sent to the server until offline is disabled. Calling this method again with offline set to NO will allow events to be sent to server and the client will attempt to send events that have been queued while offline.
@@ -607,6 +658,14 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
  */
 - (void)useAdvertisingIdForDeviceId;
 
+/**
+  By default the iOS SDK will track several user properties such as carrier, city, country, ip_address, language, platform, etc. You can use the provided AMPTrackingOptions interface to customize and disable individual fields.
+
+  Note: Each operation on the AMPTrackingOptions object returns the same instance which allows you to chain multiple operations together.
+
+      AMPTrackingOptions *options = [[[[AMPTrackingOptions options] disableCity] disableIPAddress] disablePlatform];
+      [[Amplitude instance] setTrackingOptions:options];
+ */
 - (void)setTrackingOptions:(AMPTrackingOptions *)options;
 
 /**
@@ -620,9 +679,52 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
  */
 - (void)disableCoppaControl;
 
+/**
+ Sends events to a different URL other than kAMPEventLogUrl. Used for proxy servers
+
+ We now have a new method setServerZone. To send data to Amplitude's EU servers, recommend to use setServerZone
+ method like [client setServerZone:EU]
+ */
 - (void)setServerUrl:(NSString *)serverUrl;
 
+/**
+ Sets Content-Type header for event sending requests
+*/
+- (void)setContentTypeHeader:(NSString *)contentType;
+
 - (void)setBearerToken:(NSString *)token;
+
+- (void)setPlan:(AMPPlan *)plan;
+
+- (void)setIngestionMetadata:(AMPIngestionMetadata *)ingestionMetadata;
+
+/**
+ * Set Amplitude Server Zone, switch to zone related configuration, including dynamic configuration and server url.
+ * To send data to Amplitude's EU servers, you need to configure the serverZone to EU like [client setServerZone:EU]
+ */
+- (void)setServerZone:(AMPServerZone)serverZone;
+
+/**
+ * Set Amplitude Server Zone, switch to zone related configuration, including dynamic configuration and server url.
+ * If updateServerUrl is true, including server url as well. Recommend to keep updateServerUrl to be true for alignment.
+ */
+- (void)setServerZone:(AMPServerZone)serverZone updateServerUrl:(BOOL)updateServerUrl;
+
+/**
+ * Adds a new middleware function to run on each logEvent() call prior to sending to Amplitude.
+ */
+- (void)addEventMiddleware:(id<AMPMiddleware> _Nonnull)middleware;
+
+/**
+ * The amount of time after an identify is logged that identify events will be batched before being uploaded to the server.
+ * The default is 30 seconds.
+ */
+- (BOOL)setIdentifyUploadPeriodSeconds:(int)uploadPeriodSeconds;
+
+/**
+ * Don't.
+ */
+- (void)disableIdentifyBatching:(BOOL)disable;
 
 /**-----------------------------------------------------------------------------
  * @name Other Methods
@@ -681,6 +783,15 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
  Call to check if the SDK is ready to start a new session at timestamp. Returns YES if a new session was started, otherwise NO and current session is extended. Only use if you know what you are doing. Recommended to use current time in UTC milliseconds for timestamp.
  */
 - (BOOL)startOrContinueSession:(long long)timestamp;
+
+
+- (NSString *)getContentTypeHeader;
+
+/**
+ Call to send the Deep Link Opened event, only when defaultTracking.deepLinks is enabled.
+ */
+- (void)continueUserActivity:(NSUserActivity *)activity NS_SWIFT_NAME(continueUserActivity(activity:));
+- (void)openURL:(NSURL *)url NS_SWIFT_NAME(openURL(url:));
 
 @end
 

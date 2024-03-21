@@ -1,6 +1,6 @@
 //
-//  AMPURLConnection.h
-//  Copyright (c) 2013 Amplitude Inc. (https://amplitude.com/)
+//  AMPMiddleware.m
+//  Copyright (c) 2021 Amplitude Inc. (https://amplitude.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -21,14 +21,32 @@
 //  THE SOFTWARE.
 //
 
-#if AMPLITUDE_SSL_PINNING
-
 #import <Foundation/Foundation.h>
-#import "ISPPinnedNSURLConnectionDelegate.h"
+#import "AMPMiddleware.h"
 
-@interface AMPURLConnection : ISPPinnedNSURLConnectionDelegate <NSURLConnectionDelegate,NSURLConnectionDataDelegate>
+@implementation AMPMiddlewarePayload
 
-+ (void)sendAsynchronousRequest:(NSURLRequest *)request queue:(NSOperationQueue *)queue completionHandler:(void (^)(NSURLResponse *response, NSData *data, NSError *connectionError))handler;
+- (instancetype _Nonnull)initWithEvent:(NSMutableDictionary *_Nonnull) event withExtra:(NSMutableDictionary *_Nullable) extra {
+    if ((self = [super init])) {
+        self.event = event;
+        self.extra = extra;
+    }
+    return self;
+}
 
 @end
-#endif
+
+@implementation AMPBlockMiddleware
+
+- (instancetype _Nonnull)initWithBlock:(AMPMiddlewareBlock)block {
+    if (self = [super init]) {
+        _block = block;
+    }
+    return self;
+}
+
+- (void)run:(AMPMiddlewarePayload *)payload next:(AMPMiddlewareNext)next {
+    self.block(payload, next);
+}
+
+@end
