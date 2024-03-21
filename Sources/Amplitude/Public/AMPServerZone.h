@@ -28,7 +28,6 @@
  * For usage like sending data to Amplitude's EU servers, you need to configure the serverZone
  * property after initializing the client with setServerZone method.
  */
-typedef NS_ENUM(NSInteger, AMPServerZone);
 
 #ifndef AMPServerZone_h
 #define AMPServerZone_h
