@@ -138,3 +138,5 @@ NSString *const kAMPEventPropFromBackground = @"[Amplitude] From Background";
 NSString *const kAMPEventPropLinkUrl = @"[Amplitude] Link URL";
 NSString *const kAMPEventPropLinkReferrer = @"[Amplitude] Link Referrer";
 NSString *const kAMPEventPropScreenName = @"[Amplitude] Screen Name";
+
+NSString *const AmplitudeDidSetDeviceIdNotification = @"AmplitudeDidSetDeviceIdNotification";

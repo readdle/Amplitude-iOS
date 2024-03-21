@@ -127,15 +127,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     instanceName = [instanceName lowercaseString];
 
     if ((self = [super init])) {
-<<<<<<< HEAD
-        NSString *databaseDirectory = directoryPath ?: [AMPUtils platformDataDirectory];
-        NSString *databasePath = [databaseDirectory stringByAppendingPathComponent:@"com.amplitude.database"];
-=======
         NSString *databaseDirectory = [AMPUtils platformDataDirectory];
         NSString *appPathWithBundleIdenitfier = [NSString stringWithFormat:@"com.amplitude.database.%@", [[NSBundle mainBundle] bundleIdentifier]];
         NSString *appPath = [AMPUtils isSandboxEnabled] ? @"com.amplitude.database" : appPathWithBundleIdenitfier;
         NSString *databasePath = [databaseDirectory stringByAppendingPathComponent:appPath];
->>>>>>> amplitude/main
         if (![instanceName isEqualToString:kAMPDefaultInstance]) {
             databasePath = [NSString stringWithFormat:@"%@_%@", databasePath, instanceName];
         }

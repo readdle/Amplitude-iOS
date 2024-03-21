@@ -118,3 +118,5 @@ extern NSString *const kAMPEventPropFromBackground;
 extern NSString *const kAMPEventPropLinkUrl;
 extern NSString *const kAMPEventPropLinkReferrer;
 extern NSString *const kAMPEventPropScreenName;
+
+extern NSString *const AmplitudeDidSetDeviceIdNotification;

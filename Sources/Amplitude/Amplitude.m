@@ -88,16 +88,13 @@
 #import <Cocoa/Cocoa.h>
 #endif
 
-<<<<<<< HEAD
 #if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
 #else
 #import <Cocoa/Cocoa.h>
 #endif // TARGET_OS_IPHONE
 
-=======
 @import AnalyticsConnector;
->>>>>>> amplitude/main
 
 @interface Amplitude ()
 
@@ -112,20 +109,10 @@
 @property (nonatomic, assign) int backoffUploadBatchSize;
 @property (nonatomic, copy, readwrite, nullable) NSString *userId;
 @property (nonatomic, copy, readwrite) NSString *deviceId;
-<<<<<<< HEAD
-
-@end
-
-NSString *const kAMPSessionStartEvent = @"session_start";
-NSString *const kAMPSessionEndEvent = @"session_end";
-NSString *const kAMPRevenueEvent = @"revenue_amount";
-NSString *const AmplitudeDidSetDeviceIdNotification = @"AmplitudeDidSetDeviceIdNotification";
-
-=======
 @property (nonatomic, copy, readwrite) NSString *contentTypeHeader;
+
 @end
 
->>>>>>> amplitude/main
 static NSString *const BACKGROUND_QUEUE_NAME = @"BACKGROUND";
 static NSString *const DATABASE_VERSION = @"database_version";
 static NSString *const DEVICE_ID = @"device_id";
@@ -257,12 +244,8 @@ static NSString *const APP_BUILD = @"app_build";
         _apiPropertiesTrackingOptions = [NSDictionary dictionary];
         _coppaControlEnabled = NO;
         self.instanceName = instanceName;
-<<<<<<< HEAD
         _dbHelper = [AMPDatabaseHelper getDatabaseHelper:instanceName databaseDirectoryPath:eventsDataDirectory];
-=======
-        _dbHelper = [AMPDatabaseHelper getDatabaseHelper:instanceName];
         _middlewareRunner = [AMPMiddlewareRunner middleRunner];
->>>>>>> amplitude/main
 
         self.eventUploadThreshold = kAMPEventUploadThreshold;
         self.eventMaxCount = kAMPEventMaxCount;
@@ -295,13 +278,10 @@ static NSString *const APP_BUILD = @"app_build";
         #if !TARGET_OS_OSX && !TARGET_OS_WATCH
             self->_uploadTaskID = UIBackgroundTaskInvalid;
         #endif
-<<<<<<< HEAD
-            
             NSParameterAssert(eventsDataDirectory);
-=======
 
             NSString *eventsDataDirectory = [AMPUtils platformDataDirectory];
->>>>>>> amplitude/main
+
             NSString *propertyListPath = [eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.plist"];
             if (![self.instanceName isEqualToString:kAMPDefaultInstance]) {
                 propertyListPath = [NSString stringWithFormat:@"%@_%@", propertyListPath, self.instanceName]; // namespace pList with instance name
@@ -570,10 +550,24 @@ static NSString *const APP_BUILD = @"app_build";
             } else {
                 self.userId = [self.dbHelper getValue:USER_ID];
             }
-<<<<<<< HEAD
-            
+
             [NSNotificationCenter.defaultCenter
              postNotificationName:AmplitudeDidSetDeviceIdNotification object:self];
+
+            // Set the user ID and device ID in the amplitude core instance. This is used to share user identity and user properties
+            // between Analytics and Experiment SDKs.
+            id<IdentityStoreEditor> identityStoreEditor = [[[AnalyticsConnector getInstance:self.instanceName] identityStore] editIdentity];
+            [[[identityStoreEditor setUserId:self.userId] setDeviceId:self.deviceId] commit];
+            if (self.initCompletionBlock != nil) {
+                self.initCompletionBlock();
+            }
+
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH
+            // Unlike other default events options that can be evaluated later, screenViews has to be evaluated during the actual initialization
+            if (self.defaultTracking.screenViews) {
+                [UIViewController amp_swizzleViewDidAppear];
+            }
+#endif
         }];
 
 #if TARGET_OS_IPHONE
@@ -590,9 +584,9 @@ static NSString *const APP_BUILD = @"app_build";
         #endif
                         // The earliest time to fetch dynamic config
                         [self refreshDynamicConfig];
-                        
+
                         NSNumber *now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
-                        [self startOrContinueSessionNSNumber:now];
+                        [self startOrContinueSessionNSNumber:now inForeground:NO];
                         self->_inForeground = YES;
         #if !TARGET_OS_OSX
                     }];
@@ -609,29 +603,12 @@ static NSString *const APP_BUILD = @"app_build";
             self->_inForeground = YES;
         }];
 #endif
-        
+
         _initialized = YES;
-=======
-            // Set the user ID and device ID in the amplitude core instance. This is used to share user identity and user properties
-            // between Analytics and Experiment SDKs.
-            id<IdentityStoreEditor> identityStoreEditor = [[[AnalyticsConnector getInstance:self.instanceName] identityStore] editIdentity];
-            [[[identityStoreEditor setUserId:self.userId] setDeviceId:self.deviceId] commit];
-            if (self.initCompletionBlock != nil) {
-                self.initCompletionBlock();
-            }
-            
-#if !TARGET_OS_OSX && !TARGET_OS_WATCH
-            // Unlike other default events options that can be evaluated later, screenViews has to be evaluated during the actual initialization
-            if (self.defaultTracking.screenViews) {
-                [UIViewController amp_swizzleViewDidAppear];
-            }
-#endif
-        }];
 
         if (!self.deferCheckInForeground) {
             [self checkInForeground];
         }
->>>>>>> amplitude/main
     }
 }
 
@@ -1279,14 +1256,9 @@ static NSString *const APP_BUILD = @"app_build";
         if (uploadSuccessful && [self.dbHelper getEventCount] > self.eventUploadThreshold) {
             int limit = self->_backoffUpload ? self->_backoffUploadBatchSize : 0;
             [self uploadEventsWithLimit:limit];
-<<<<<<< HEAD
         }
-    #if !TARGET_OS_OSX
-        else if (self->_uploadTaskID != UIBackgroundTaskInvalid) {
-=======
     #if !TARGET_OS_OSX && !TARGET_OS_WATCH
-        } else if (self->_uploadTaskID != UIBackgroundTaskInvalid) {
->>>>>>> amplitude/main
+        else if (self->_uploadTaskID != UIBackgroundTaskInvalid) {
             if (uploadSuccessful) {
                 self->_backoffUpload = NO;
                 self->_backoffUploadBatchSize = self.eventUploadMaxBatchSize;

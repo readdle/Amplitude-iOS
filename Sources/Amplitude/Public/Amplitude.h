@@ -22,20 +22,14 @@
 //
 
 #import <Foundation/Foundation.h>
-<<<<<<< HEAD:Sources/Amplitude/Amplitude.h
 #import <Amplitude/AMPIdentify.h>
 #import <Amplitude/AMPRevenue.h>
 #import <Amplitude/AMPTrackingOptions.h>
-=======
-#import "AMPIdentify.h"
-#import "AMPRevenue.h"
-#import "AMPTrackingOptions.h"
-#import "AMPPlan.h"
-#import "AMPIngestionMetadata.h"
-#import "AMPServerZone.h"
-#import "AMPMiddleware.h"
-#import "AMPDefaultTrackingOptions.h"
->>>>>>> amplitude/main:Sources/Amplitude/Public/Amplitude.h
+#import <Amplitude/AMPPlan.h>
+#import <Amplitude/AMPIngestionMetadata.h>
+#import <Amplitude/AMPServerZone.h>
+#import <Amplitude/AMPMiddleware.h>
+#import <Amplitude/AMPDefaultTrackingOptions.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

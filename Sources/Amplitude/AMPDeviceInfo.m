@@ -210,16 +210,6 @@
 }
 
 + (NSString *)getPlatformString {
-<<<<<<< HEAD
-#if !TARGET_OS_OSX
-    char *sysctl_name = "hw.machine";
-    
-    if ([NSProcessInfo processInfo].isiOSAppOnMac) {
-        sysctl_name = "hw.model";
-    }
-#else
-=======
->>>>>>> amplitude/main
     const char *sysctl_name = "hw.model";
 #if TARGET_OS_IOS
     BOOL isiOSAppOnMac = NO;
