@@ -42,11 +42,6 @@
 		</dict>
 	</array>
 	<key>NSPrivacyTrackingDomains</key>
-	<array>
-		<string>https://api2.amplitude.com/</string>
-		<string>https://api.eu.amplitude.com/</string>
-		<string>https://regionconfig.amplitude.com/</string>
-		<string>https://regionconfig.eu.amplitude.com/</string>
-	</array>
+	<array/>
 </dict>
 </plist>
