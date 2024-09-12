@@ -682,7 +682,9 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
  */
 - (BOOL)startOrContinueSession:(long long)timestamp;
 
+#if TARGET_OS_OSX
 - (void)waitForDeviceIdSetWithTimeout:(dispatch_time_t)timeout;
+#endif
 
 @end
 
@@ -691,5 +693,6 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
 extern NSString *const kAMPSessionStartEvent;
 extern NSString *const kAMPSessionEndEvent;
 extern NSString *const kAMPRevenueEvent;
+extern NSString *const AmplitudeDidSetDeviceIdNotification;
 
 NS_ASSUME_NONNULL_END
