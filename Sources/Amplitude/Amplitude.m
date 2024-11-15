@@ -92,6 +92,9 @@
 @property (nonatomic, assign) int backoffUploadBatchSize;
 @property (nonatomic, copy, readwrite, nullable) NSString *userId;
 @property (nonatomic, copy, readwrite) NSString *deviceId;
+#if TARGET_OS_OSX
+@property (nonatomic, readonly) dispatch_semaphore_t deviceIdSemaphore;
+#endif
 
 @end
 
@@ -202,6 +205,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _sslPinningEnabled = NO;
 #endif
 
+#if TARGET_OS_OSX
+        _deviceIdSemaphore = dispatch_semaphore_create(0);
+#endif
         _initialized = NO;
         _sessionId = -1;
         _updateScheduled = NO;
@@ -405,6 +411,12 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [self initializeApiKey:apiKey userId:userId setUserId:YES];
 }
 
+#if TARGET_OS_OSX
+- (void)waitForDeviceIdSetWithTimeout:(dispatch_time_t)timeout {
+    dispatch_semaphore_wait(self.deviceIdSemaphore, timeout);
+    dispatch_semaphore_signal(self.deviceIdSemaphore);
+}
+#endif
 /**
  * SetUserId: client explicitly initialized with a userId (can be nil).
  * If setUserId is NO, then attempt to load userId from saved eventsData.
@@ -441,6 +453,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                 self.userId = [self.dbHelper getValue:USER_ID];
             }
             
+#if TARGET_OS_OSX
+            dispatch_semaphore_signal(self.deviceIdSemaphore);
+#endif
             [NSNotificationCenter.defaultCenter
              postNotificationName:AmplitudeDidSetDeviceIdNotification object:self];
         }];
