@@ -682,6 +682,10 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
  */
 - (BOOL)startOrContinueSession:(long long)timestamp;
 
+#if TARGET_OS_OSX
+- (void)waitForDeviceIdSetWithTimeout:(dispatch_time_t)timeout;
+#endif
+
 @end
 
 #pragma mark - constants
