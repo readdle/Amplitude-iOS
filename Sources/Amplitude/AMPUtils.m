@@ -175,7 +175,12 @@
 }
 
 + (UIWindow *)getKeyWindow {
-    for (UIWindow *window in [[AMPUtils getSharedApplication] windows]) {
+    UIWindowScene *scene = (UIWindowScene *)[[AMPUtils getSharedApplication].connectedScenes
+                                             objectsPassingTest:^BOOL(UIScene *nextScene, BOOL *stop) {
+        return [nextScene isKindOfClass:[UIWindowScene class]];
+    }].anyObject;
+    
+    for (UIWindow *window in scene.windows) {
         if ([window isKeyWindow]) {
             return window;
         }
