@@ -1492,7 +1492,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     if (deviceId == nil ||
         ![self isArgument:deviceId validType:[NSString class] methodName:@"isValidDeviceId"] ||
         [deviceId isEqualToString:@"e3f5536a141811db40efd6400f1d0a4e"] ||
-        [deviceId isEqualToString:@"04bab7ee75b9a58d39b8dc54e8851084"]) {
+        [deviceId isEqualToString:@"04bab7ee75b9a58d39b8dc54e8851084"] ||
+        // https://readdle-j.atlassian.net/browse/PEM-10525
+        // MAC address 02:00:00:00:00:00 that the previous en0 lookup in getMacAddress returns since macOS 27.
+        // It is marked as invalid, so that Amplitude regenerates the new ID using the new getMacAddess implmenetation.
+        [deviceId isEqualToString:@"020000000000"]) {
         return NO;
     }
     return YES;
