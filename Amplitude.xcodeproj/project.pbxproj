@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		894780BE4C54DCC476EEE6D7 /* RDSystemInformation.h in Headers */ = {isa = PBXBuildFile; fileRef = 9876FC72424ABDCA7115CA32 /* RDSystemInformation.h */; };
+		A215F1E55C88490DF9C34E99 /* RDSystemInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = 0E09D8C6D3CBC86AC70C61B7 /* RDSystemInformation.m */; };
+		770308F5BCDE622B3F52013B /* RDSystemInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = 0E09D8C6D3CBC86AC70C61B7 /* RDSystemInformation.m */; };
 		1213D89B24176E4700300E98 /* AmplitudeFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 1213D89824176E4700300E98 /* AmplitudeFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1213D89C24176E4700300E98 /* AmplitudeFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 1213D89824176E4700300E98 /* AmplitudeFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1213D89D24176E4700300E98 /* AmplitudeFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 1213D89824176E4700300E98 /* AmplitudeFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -179,6 +182,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9876FC72424ABDCA7115CA32 /* RDSystemInformation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RDSystemInformation.h; sourceTree = "<group>"; };
+		0E09D8C6D3CBC86AC70C61B7 /* RDSystemInformation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RDSystemInformation.m; sourceTree = "<group>"; };
 		1213D80B2416F3EA00300E98 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		1213D89824176E4700300E98 /* AmplitudeFramework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AmplitudeFramework.h; sourceTree = "<group>"; };
 		1213D89924176E4700300E98 /* Amplitude.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = Amplitude.modulemap; sourceTree = "<group>"; };
@@ -342,6 +347,8 @@
 				1279F8D425244D78003DCE07 /* AMPDatabaseHelper.m */,
 				1279F8C225244D78003DCE07 /* AMPDeviceInfo.h */,
 				1279F8D525244D78003DCE07 /* AMPDeviceInfo.m */,
+				9876FC72424ABDCA7115CA32 /* RDSystemInformation.h */,
+				0E09D8C6D3CBC86AC70C61B7 /* RDSystemInformation.m */,
 				1279F8C125244D78003DCE07 /* AMPIdentify.h */,
 				1279F8D625244D78003DCE07 /* AMPIdentify.m */,
 				1279F8D325244D78003DCE07 /* Amplitude.h */,
@@ -510,6 +517,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				894780BE4C54DCC476EEE6D7 /* RDSystemInformation.h in Headers */,
 				1279FA7F2525949D003DCE07 /* ISPCertificatePinning.h in Headers */,
 				1213D89D24176E4700300E98 /* AmplitudeFramework.h in Headers */,
 				1279F93025244E8F003DCE07 /* Amplitude+SSLPinning.h in Headers */,
@@ -862,6 +870,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A215F1E55C88490DF9C34E99 /* RDSystemInformation.m in Sources */,
 				1279FA702525949D003DCE07 /* ISPCertificatePinning.m in Sources */,
 				1279F93825244E8F003DCE07 /* AMPUtils.m in Sources */,
 				1279F93F25244E8F003DCE07 /* AMPURLConnection.m in Sources */,
@@ -900,6 +909,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				770308F5BCDE622B3F52013B /* RDSystemInformation.m in Sources */,
 				CE17E9A02577F97A00384590 /* AMPConfigManager.m in Sources */,
 				CE17E9A12577F97A00384590 /* AMPConstants.m in Sources */,
 				CE17E9A22577F97A00384590 /* AMPIdentify.m in Sources */,
